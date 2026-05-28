@@ -10,10 +10,13 @@
 import { easyQuestions } from '../src/content/questions-easy';
 import { hardQuestions } from '../src/content/questions-hard';
 import type { Question } from '../src/types';
+import {
+  EXPLANATION_MAX_CHARS,
+  MESSAGE_BUDGET_CHARS,
+  OPTION_MAX_CHARS,
+  PROMPT_MAX_CHARS,
+} from '../src/lib/limits';
 
-const OPTION_MAX = 400;
-const EXPLANATION_MAX = 200;
-const PROMPT_MAX = 1000;
 const POLL_QUESTION = 'Which one is correct?';
 
 type Issue = { id: string; field: string; detail: string };
@@ -38,11 +41,11 @@ function check(qs: readonly Question[], prefix: 'easy-' | 'hard-'): void {
       if (opt.length === 0) {
         issues.push({ id: q.id, field: `options[${i}]`, detail: 'empty' });
       }
-      if (opt.length > OPTION_MAX) {
+      if (opt.length > OPTION_MAX_CHARS) {
         issues.push({
           id: q.id,
           field: `options[${i}]`,
-          detail: `length ${opt.length} > ${OPTION_MAX}`,
+          detail: `length ${opt.length} > ${OPTION_MAX_CHARS}`,
         });
       }
     }
@@ -66,18 +69,18 @@ function check(qs: readonly Question[], prefix: 'easy-' | 'hard-'): void {
         detail: 'kebab-case lowercase letters, digits, and dashes only',
       });
     }
-    if (q.explanation.length > EXPLANATION_MAX) {
+    if (q.explanation.length > EXPLANATION_MAX_CHARS) {
       issues.push({
         id: q.id,
         field: 'explanation',
-        detail: `length ${q.explanation.length} > ${EXPLANATION_MAX}`,
+        detail: `length ${q.explanation.length} > ${EXPLANATION_MAX_CHARS}`,
       });
     }
-    if (q.prompt.length > PROMPT_MAX) {
+    if (q.prompt.length > PROMPT_MAX_CHARS) {
       issues.push({
         id: q.id,
         field: 'prompt',
-        detail: `length ${q.prompt.length} > ${PROMPT_MAX}`,
+        detail: `length ${q.prompt.length} > ${PROMPT_MAX_CHARS}`,
       });
     }
     if (!q.hint || q.hint.length === 0) {
@@ -88,6 +91,23 @@ function check(qs: readonly Question[], prefix: 'easy-' | 'hard-'): void {
     }
     if (!q.schema || q.schema.length === 0) {
       issues.push({ id: q.id, field: 'schema', detail: 'empty' });
+    }
+    // Defensive check that the rendered message won't blow Telegram's
+    // 4096-char sendMessage cap. The actual HTML render adds tags but
+    // the raw text fields dominate; staying under MESSAGE_BUDGET_CHARS
+    // leaves comfortable headroom.
+    const totalText =
+      q.scenario.length +
+      q.schema.length +
+      q.prompt.length +
+      q.hint.length +
+      q.options.reduce((sum, o) => sum + o.length, 0);
+    if (totalText > MESSAGE_BUDGET_CHARS) {
+      issues.push({
+        id: q.id,
+        field: 'total text',
+        detail: `length ${totalText} > ${MESSAGE_BUDGET_CHARS}`,
+      });
     }
   }
 }

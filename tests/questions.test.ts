@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { easyQuestions } from '../src/content/questions-easy';
 import { hardQuestions } from '../src/content/questions-hard';
+import {
+  EXPLANATION_MAX_CHARS,
+  MESSAGE_BUDGET_CHARS,
+  OPTION_MAX_CHARS,
+} from '../src/lib/limits';
 
-const OPTION_MAX = 400;
-const EXPLANATION_MAX = 200;
+const OPTION_MAX = OPTION_MAX_CHARS;
+const EXPLANATION_MAX = EXPLANATION_MAX_CHARS;
 
 describe('question pools', () => {
   it('have content in both pools', () => {
@@ -78,7 +83,7 @@ describe('question pools', () => {
     for (const q of [...easyQuestions, ...hardQuestions]) {
       const total = q.scenario.length + q.schema.length + q.prompt.length + q.hint.length +
         q.options.reduce((s, o) => s + o.length, 0);
-      expect(total, q.id).toBeLessThan(3500);
+      expect(total, q.id).toBeLessThanOrEqual(MESSAGE_BUDGET_CHARS);
     }
   });
 });
