@@ -21,9 +21,11 @@ type Question = {
   hint: string;            // shown behind a Telegram spoiler tag
   options: [string, string, string, string]; // exactly 4 candidate answers
   correctIndex: 0 | 1 | 2 | 3;
-  explanation: string;     // 200 chars max. Shown when the reader votes.
+  explanation: string;     // 200 chars max (Telegram quiz-poll limit). Shown when the reader votes.
 };
 ```
+
+The exact numeric limits live in `src/lib/limits.ts` and are imported by both the audit script and the test suite, so they cannot drift.
 
 ## Authoring checklist
 
@@ -33,7 +35,7 @@ type Question = {
 4. **Write four plausible options.** Three of them must look right at a glance. Common mistakes make the best distractors: a missing GROUP BY, a `= NULL`, the wrong join type, AND vs OR precedence, a forgotten WHERE on an UPDATE.
 5. **One clear correct answer.** No "both A and C work" unless the question is explicitly about that.
 6. **Explanation is short.** Reveal the why, not a textbook chapter. The Telegram limit is 200 characters.
-7. **Options can be long.** They are rendered in the context message, not the poll itself. The audit caps them at 200 chars for readability.
+7. **Options can be long.** They are rendered in the context message, not the poll itself. The audit caps them at 400 chars (see `src/lib/limits.ts`). The poll only shows the letters A, B, C, D, so the 100-char-per-option Telegram poll limit does not apply.
 8. **No em-dashes in any prose.** Use commas, colons, or sentences. Em-dashes look out of place in a learning channel and tend to read as a smell that the text was machine-generated.
 
 ## After you edit

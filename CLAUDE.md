@@ -97,7 +97,7 @@ If you later want to auto-delete or auto-edit, the helpers already exist in `src
 
 `pnpm test` runs Vitest. The suite covers:
 
-- The question pools: every entry has 4 options, a hint, a scenario, a schema, a prompt, a valid `correctIndex`, and a unique id. Options stay under 200 chars; explanations stay under Telegram's 200-char limit.
+- The question pools: every entry has 4 options, a hint, a scenario, a schema, a prompt, a valid `correctIndex`, and a unique id. Options stay under 400 chars (the poll only shows A/B/C/D, so Telegram's 100-char poll limit does not apply); explanations stay under Telegram's 200-char quiz-poll limit. Limits live in `src/lib/limits.ts`.
 - `pickForDay`: deterministic, cycles through the pool, throws on empty pool, respects the timezone.
 - `formatContextMessage`: contains the scenario, schema, lettered options, the spoiler hint, and stays well under 4096 chars.
 - `channelUrlFrom`: handles `@username`, full t.me URLs, numeric ids, and rejects short handles.
