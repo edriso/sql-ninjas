@@ -19,6 +19,14 @@ import { logger } from '../src/lib/logger';
 
 async function main(): Promise<void> {
   const arg = (process.argv[2] ?? 'easy').toLowerCase();
+  // Validate the mode BEFORE doing any work, so a typo like
+  // "pnpm send-test hardd" fails fast instead of silently posting
+  // nothing (or worse, posting the wrong question).
+  if (!['easy', 'hard', 'both'].includes(arg)) {
+    console.error(`Unknown mode "${arg}". Use easy, hard, or both.`);
+    process.exit(1);
+  }
+
   const bot = new Bot(config.botToken);
   // Preflight: catches bad token or chat id with one clean diagnostic
   // instead of two confusing failures inside runOnce.
@@ -37,10 +45,6 @@ async function main(): Promise<void> {
   }
   if (arg === 'hard' || arg === 'both') {
     await runOnce('hard', bot);
-  }
-  if (!['easy', 'hard', 'both'].includes(arg)) {
-    console.error(`Unknown mode "${arg}". Use easy, hard, or both.`);
-    process.exit(1);
   }
 }
 
