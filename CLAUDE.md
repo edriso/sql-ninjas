@@ -60,6 +60,7 @@ sql-ninjas/
 - **Optional dependency for dotenv.** Listed under `optionalDependencies` so a prod `npm install --omit=optional` works fine. Dev installs always get it.
 - **Discriminated schedule type.** `ScheduleDef` has a `difficulty` field. Adding a new slot (a Friday challenge, a weekend roundup) is a one-line edit in `schedules.ts`.
 - **No retries.** A failed Telegram call is logged; the tick is lost; the next fire takes over. The bot is meant to run for years untouched; a flaky-network day at 10:00 is not worth complicating the codebase for.
+- **LeetCode integration is optional per-question.** A question can set `leetcodeNumber` and `leetcodeSlug` together. When present, the channel post adds a "Practice freehand on LeetCode #N" link to the free LeetCode problem. Readers can earn points there. The MCQ is the quick self check; LeetCode is the deeper practice. The audit enforces all-or-nothing on the two fields.
 - **Date math is timezone-safe.** `dayOfYearIn` uses `Intl.DateTimeFormat` with the timezone, never `Date.getDate()` or `getDay()` which read the host TZ. This matters when the host is in UTC and the channel runs on Cairo time.
 - **Schedule cron clamp.** Defaults to 10:00 and 19:00 so neither lands inside Egypt's spring-forward window (00:00 -> 01:00 on the last Friday of April), which node-cron silently skips.
 - **Question pool audit is a script, not a runtime check.** Author mistakes are caught at edit time by `pnpm audit-questions` and by unit tests. The runtime trusts the pool.

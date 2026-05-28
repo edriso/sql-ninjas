@@ -52,8 +52,14 @@ The cron runs in the timezone set by `TZ_NAME` (default UTC, sample sets Africa/
 The bot picks today's question by `dayOfYearInTimezone % poolLength`. That means:
 
 - The same calendar day always picks the same question, even if the cron is restarted or refires.
-- The two pools advance independently. With 17 easy and 17 hard questions, you get a fresh question every day for about half a month before the cycle wraps.
+- The two pools advance independently. The repo ships with about 50 in each pool, which gives roughly six to seven weeks of unique content per slot before any question repeats.
 - Add more questions and the cycle lengthens automatically. No config needed.
+
+## LeetCode integration
+
+Many questions mirror a free LeetCode problem and include a "Practice freehand on LeetCode #N" link in the channel post. Readers tap the link to solve the same idea in LeetCode's editor and earn points there. The MCQ in the channel is a 30-second self check; LeetCode is the deeper practice.
+
+To add a LeetCode link to a question, set the two optional fields `leetcodeNumber` and `leetcodeSlug`. See `docs/QUESTIONS.md` for the full guidance.
 
 ## Adding a question
 

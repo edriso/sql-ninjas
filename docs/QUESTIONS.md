@@ -68,3 +68,35 @@ The bot uses `dayOfYearInTimezone(today, TZ) % pool.length` to pick. That means:
   )
   ```
 - Aliases should be one letter (`o` for orders, `c` for customers, `e` for employees, `m` for manager) and used consistently.
+
+## LeetCode links (optional)
+
+A question can mirror a LeetCode problem. When it does, add two optional fields:
+
+```ts
+leetcodeNumber: 182,
+leetcodeSlug: 'duplicate-emails',
+```
+
+The post will then include a "Practice freehand on LeetCode #N" line that links to `https://leetcode.com/problems/<slug>/`. Readers tap it to solve the same idea in LeetCode's editor and earn points there. The MCQ is the 30-second self check; LeetCode is the deeper practice.
+
+Rules:
+- Both fields together, or neither. Audit fails on a mixed state.
+- Slug is kebab-case lowercase letters, digits, and dashes. No https, no path, no slashes.
+- Use only FREE LeetCode problems. Premium problems are locked behind a paywall and the link is useless.
+- Rewrite the scenario and schema in your own words. Do not copy the LeetCode problem text verbatim.
+
+Picking great free problems: the classic database track on LeetCode (175-185, 196-197, 595, 596, 620, 627, 1068, 1148, 1158, 1179, 1204, 1321, 1378, 1484, 1517, 1527, 1581, 1633, 1667, 1683, 1729, 1757, 1789, 1873, 1890, 1934, 1965, 2356) is a great hunting ground. Search by problem number to find the exact slug.
+
+## How many questions is enough?
+
+The picker uses `dayOfYearInTimezone % pool.length`, so the cycle length equals the pool size. As a rule of thumb:
+
+| Pool size | Days until a repeat for that slot |
+| --------- | --------------------------------- |
+| 30        | one month                         |
+| 60        | two months                        |
+| 90        | three months                      |
+| 180       | six months                        |
+
+The project ships with about 50 in each pool, which gives roughly six to seven weeks of unique content per slot. Add more whenever you have a good idea. There is no upper bound.
