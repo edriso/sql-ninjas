@@ -1,4 +1,4 @@
-import type { Question } from '../types';
+import { leetcodeUrl, type Question } from '../types';
 
 /**
  * Escape user-controlled text for Telegram HTML parse_mode. Only three
@@ -66,6 +66,20 @@ export function formatContextMessage(q: Question): string {
     lettered,
     '',
     `💡 <b>Hint</b>: <tg-spoiler>${hint}</tg-spoiler>`,
+  );
+
+  // If the question mirrors a LeetCode problem, point the reader there
+  // so they can write the SQL freehand and earn points in LeetCode. The
+  // MCQ is a 30-second self-check; LeetCode is the deeper practice.
+  if (q.leetcodeSlug && q.leetcodeNumber) {
+    const url = leetcodeUrl(q.leetcodeSlug);
+    lines.push(
+      '',
+      `🧠 <b>Practice freehand</b>: <a href="${url}">LeetCode #${q.leetcodeNumber}</a> (free, no signup needed to read)`,
+    );
+  }
+
+  lines.push(
     '',
     '<i>Vote in the poll just below ☟ Pick the letter you think is correct.</i>',
   );

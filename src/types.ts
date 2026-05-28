@@ -30,4 +30,18 @@ export type Question = {
   options: [string, string, string, string];
   correctIndex: 0 | 1 | 2 | 3;
   explanation: string;
+  /**
+   * Optional: the LeetCode problem this question mirrors. When set, the
+   * channel post adds a "Practice freehand on LeetCode" link so readers
+   * can solve the same idea in LeetCode's editor and earn points there.
+   * leetcodeSlug is the kebab-case URL segment, e.g. "duplicate-emails".
+   * leetcodeNumber is the integer problem number, e.g. 182.
+   */
+  leetcodeNumber?: number;
+  leetcodeSlug?: string;
 };
+
+/** Build a canonical LeetCode problem URL. */
+export function leetcodeUrl(slug: string): string {
+  return `https://leetcode.com/problems/${slug}/`;
+}
