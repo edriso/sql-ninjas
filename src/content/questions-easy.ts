@@ -7,10 +7,11 @@ import type { Question } from '../types';
  * could ask in a stand-up.
  *
  * Authoring rules (enforced by scripts/audit-questions.ts):
- *  - exactly 4 options, each <= 100 characters
- *  - explanation <= 200 characters (Telegram quiz poll limit)
+ *  - exactly 4 options, each <= OPTION_MAX_CHARS (see src/lib/limits.ts)
+ *  - explanation <= EXPLANATION_MAX_CHARS (Telegram quiz poll limit)
  *  - correctIndex is 0..3
  *  - id starts with "easy-" and is unique
+ *  - if leetcodeNumber/leetcodeSlug are set, both must be set
  */
 export const easyQuestions: readonly Question[] = [
   {
@@ -605,7 +606,7 @@ Address (addressId INTEGER, personId INTEGER, city TEXT, state TEXT)`,
     explanation:
       "The CASE expression flips each row in one shot. B's second UPDATE re-flips every row back. REVERSE on a single character is a no-op.",
     leetcodeNumber: 627,
-    leetcodeSlug: 'swap-salary',
+    leetcodeSlug: 'swap-sex-of-employees',
   },
 
   {
@@ -804,7 +805,7 @@ Bonus    (empId INTEGER, bonus NUMERIC)`,
     explanation:
       "COUNT(DISTINCT student) makes duplicate enrolment rows safe. WHERE cannot use aggregates; D treats a name like a number.",
     leetcodeNumber: 596,
-    leetcodeSlug: 'classes-more-than-5-students',
+    leetcodeSlug: 'classes-with-at-least-5-students',
   },
 
   {

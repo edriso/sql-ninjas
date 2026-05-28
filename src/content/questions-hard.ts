@@ -8,11 +8,13 @@ import type { Question } from '../types';
  * around a real task someone would actually be asked to do.
  *
  * Authoring rules (enforced by scripts/audit-questions.ts):
- *  - exactly 4 options, each <= 200 characters (rendered in the
- *    context message, not the poll itself)
- *  - explanation <= 200 characters (Telegram quiz poll limit)
+ *  - exactly 4 options, each <= OPTION_MAX_CHARS (see src/lib/limits.ts);
+ *    options are rendered in the context message, not the poll itself,
+ *    so they can be much longer than Telegram's 100-char poll limit.
+ *  - explanation <= EXPLANATION_MAX_CHARS (Telegram quiz poll limit)
  *  - correctIndex is 0..3
  *  - id starts with "hard-" and is unique
+ *  - if leetcodeNumber/leetcodeSlug are set, both must be set
  */
 export const hardQuestions: readonly Question[] = [
   {
@@ -753,7 +755,7 @@ Orders (order_id INTEGER, order_date DATE, item_id INTEGER, buyer_id INTEGER, se
     difficulty: 'hard',
     topic: 'Day-after-first-login fraction',
     scenario:
-      'Find the fraction of players who logged in on the day right after their first login. Round to 2 decimals.',
+      'Find the fraction of players who logged in on the day right after their first login. Round to 2 decimals. The query below is written for Postgres (INTERVAL literal and ::NUMERIC cast); equivalent syntax exists in MySQL (DATE_ADD, DECIMAL).',
     schema: `Activity (player_id INTEGER, device_id INTEGER, event_date DATE, games_played INTEGER)`,
     prompt: 'Which approach is correct?',
     hint: 'Per-player first login via MIN, then check if first_login + 1 day exists in the table.',
@@ -810,8 +812,9 @@ Orders (order_id INTEGER, order_date DATE, item_id INTEGER, buyer_id INTEGER, se
     correctIndex: 0,
     explanation:
       "LEAST and GREATEST turn (A,B) and (B,A) into the same canonical pair. Group by the canonical columns and aggregate.",
-    leetcodeNumber: 1699,
-    leetcodeSlug: 'number-of-calls-between-two-persons',
+    // No LeetCode link: problem #1699 is paid-only at the time of this
+    // writing, so the link would dead-end for free users. The question
+    // stands on its own as a pure SQL-Ninjas puzzle.
   },
 
   // ------------------------------------------------------------
@@ -1046,7 +1049,7 @@ orders    (id INTEGER, customer_id INTEGER, ordered_at TIMESTAMP)`,
     difficulty: 'hard',
     topic: 'CROSS JOIN for Cartesian filter',
     scenario:
-      'A Sides table has one column value (integer side lengths). Return every combination of three sides (a, b, c) that satisfies the triangle inequality.',
+      'A Sides table has one column value (integer side lengths). Return every ordered triple (a, b, c) drawn from the table that satisfies the triangle inequality. Ordered means (3, 4, 5) and (5, 4, 3) both appear.',
     schema: `Sides (value INTEGER)`,
     prompt: 'Which query is correct?',
     hint: 'Three independent copies via CROSS JOIN, then filter by the triangle rule.',
