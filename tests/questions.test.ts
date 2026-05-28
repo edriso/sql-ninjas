@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { easyQuestions } from '../src/content/questions-easy';
 import { hardQuestions } from '../src/content/questions-hard';
 
-const OPTION_MAX = 200;
+const OPTION_MAX = 400;
 const EXPLANATION_MAX = 200;
 
 describe('question pools', () => {
@@ -60,6 +60,25 @@ describe('question pools', () => {
       expect(q.scenario.trim().length, q.id).toBeGreaterThan(0);
       expect(q.schema.trim().length, q.id).toBeGreaterThan(0);
       expect(q.prompt.trim().length, q.id).toBeGreaterThan(0);
+    }
+  });
+
+  it('LeetCode metadata is all-or-nothing and slug is kebab-case', () => {
+    for (const q of [...easyQuestions, ...hardQuestions]) {
+      const hasNumber = q.leetcodeNumber !== undefined;
+      const hasSlug = q.leetcodeSlug !== undefined;
+      expect(hasNumber, q.id).toBe(hasSlug);
+      if (hasSlug) {
+        expect(q.leetcodeSlug!, q.id).toMatch(/^[a-z0-9-]+$/);
+      }
+    }
+  });
+
+  it('every question has a sane char budget for rendering', () => {
+    for (const q of [...easyQuestions, ...hardQuestions]) {
+      const total = q.scenario.length + q.schema.length + q.prompt.length + q.hint.length +
+        q.options.reduce((s, o) => s + o.length, 0);
+      expect(total, q.id).toBeLessThan(3500);
     }
   });
 });

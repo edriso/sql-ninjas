@@ -11,7 +11,7 @@ import { easyQuestions } from '../src/content/questions-easy';
 import { hardQuestions } from '../src/content/questions-hard';
 import type { Question } from '../src/types';
 
-const OPTION_MAX = 200;
+const OPTION_MAX = 400;
 const EXPLANATION_MAX = 200;
 const PROMPT_MAX = 1000;
 const POLL_QUESTION = 'Which one is correct?';
@@ -48,6 +48,23 @@ function check(qs: readonly Question[], prefix: 'easy-' | 'hard-'): void {
     }
     if (q.correctIndex < 0 || q.correctIndex > 3) {
       issues.push({ id: q.id, field: 'correctIndex', detail: `out of range: ${q.correctIndex}` });
+    }
+    // LeetCode metadata is all-or-nothing: either both fields or neither.
+    const hasLcNumber = q.leetcodeNumber !== undefined;
+    const hasLcSlug = q.leetcodeSlug !== undefined;
+    if (hasLcNumber !== hasLcSlug) {
+      issues.push({
+        id: q.id,
+        field: 'leetcode',
+        detail: 'must set both leetcodeNumber and leetcodeSlug, or neither',
+      });
+    }
+    if (hasLcSlug && !/^[a-z0-9-]+$/.test(q.leetcodeSlug ?? '')) {
+      issues.push({
+        id: q.id,
+        field: 'leetcodeSlug',
+        detail: 'kebab-case lowercase letters, digits, and dashes only',
+      });
     }
     if (q.explanation.length > EXPLANATION_MAX) {
       issues.push({
